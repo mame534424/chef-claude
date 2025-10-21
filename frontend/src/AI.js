@@ -1,4 +1,6 @@
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5001";
+// Vite uses import.meta.env, not process.env
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://chef-claude-production-425c.up.railway.app";
+
 export async function getRecipeFromMistral(ingredientsArr) {
   // Validate input
   if (!ingredientsArr || !Array.isArray(ingredientsArr) || ingredientsArr.length === 0) {
@@ -8,13 +10,13 @@ export async function getRecipeFromMistral(ingredientsArr) {
   try {
     console.log("Sending request to backend with ingredients:", ingredientsArr);
     
-    const response = await fetch(`${BACKEND_URL}/getRecipe`, { // CHANGED TO 5001
+    const response = await fetch(`${BACKEND_URL}/getRecipe`, {
       method: "POST",
       headers: { 
         "Content-Type": "application/json" 
       },
       body: JSON.stringify({ 
-        ingredients: ingredientsArr // because backend only understand json format in fetch but we can use also axios 
+        ingredients: ingredientsArr
       })
     });
 
@@ -34,7 +36,7 @@ export async function getRecipeFromMistral(ingredientsArr) {
     console.error("Recipe API Error:", err);
     
     if (err.message.includes('Failed to fetch')) {
-      throw new Error("Cannot connect to server. Make sure the backend is running on port 5001");
+      throw new Error("Cannot connect to the recipe service. Please try again later.");
     } else {
       throw err;
     }
